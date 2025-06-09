@@ -1,0 +1,45 @@
+config { type: "table" }
+
+-- Step 3: Correct logical errors in timestamps and produce the final clean table.
+WITH corrected_timestamps AS (
+  SELECT
+    order_id,
+    user_id,
+    status,
+    gender,
+    created_at,
+    -- Correct shipped_at: must be after created_at
+    CASE
+      WHEN shipped_at > created_at THEN shipped_at
+      ELSE NULL
+    END AS shipped_at,
+    -- Correct delivered_at: must be after the corrected shipped_at
+    CASE
+      WHEN delivered_at > (
+        CASE
+          WHEN shipped_at > created_at THEN shipped_at
+          ELSE NULL
+        END
+      ) THEN delivered_at
+      ELSE NULL
+    END AS temp_delivered_at -- Use a temporary column to stage the corrected value
+  FROM
+    ${ref("stg_orders_standardized")}
+)
+
+-- Final SELECT to clean up returned_at logic and output the final model.
+SELECT
+  order_id,
+  user_id,
+  status,
+  gender,
+  created_at,
+  -- Correct returned_at: must be after a valid delivered_at date
+  CASE
+    WHEN status = 'Returned' AND temp_delivered_at IS NOT NULL THEN TIMESTAMP_ADD(temp_delivered_at, INTERVAL 1 DAY)
+    ELSE NULL
+  END AS returned_at,
+  shipped_at,
+  temp_delivered_at AS delivered_at
+FROM
+  corrected_timestamps

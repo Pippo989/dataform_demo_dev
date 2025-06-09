@@ -1,0 +1,20 @@
+config { type: "view" }
+
+-- Step 2: Standardize inconsistent values in 'status' and 'gender' columns.
+SELECT
+  order_id,
+  user_id,
+  -- Standardize status to title case
+  INITCAP(TRIM(LOWER(status))) AS status,
+  -- Standardize gender to single characters 'F' or 'M'
+  CASE
+    WHEN UPPER(TRIM(gender)) IN ('F', 'FEMALE') THEN 'F'
+    WHEN UPPER(TRIM(gender)) IN ('M', 'MALE') THEN 'M'
+    ELSE NULL
+  END AS gender,
+  created_at,
+  returned_at,
+  shipped_at,
+  delivered_at
+FROM
+  ${ref("stg_orders_deduplicated")}
