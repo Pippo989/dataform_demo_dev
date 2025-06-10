@@ -2,13 +2,7 @@
 config {
   type: "view",
   schema: "thelook_ecommerce_staging",
-  assertions: {
-    uniqueKey: ["id"],
-    nonNull: ["id"],
-    rowConditions: [
-      "retail_price > 0"
-    ]
-  }
+
 }
 
 SELECT

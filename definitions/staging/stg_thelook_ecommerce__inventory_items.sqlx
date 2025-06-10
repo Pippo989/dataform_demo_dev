@@ -27,7 +27,7 @@ deduplicated_source AS (
 )
 
 SELECT
-  CAST(id AS INT64) AS inventory_item_id,
+  CAST(id AS INT64) AS id,
   CAST(product_id AS INT64) AS product_id,
   created_at,
   sold_at,
@@ -42,4 +42,3 @@ FROM deduplicated_source
 WHERE rn = 1
   -- Filter out records with invalid business logic
   AND cost > 0
-  AND product_retail_price >= cost

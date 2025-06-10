@@ -23,7 +23,7 @@ deduplicated_source AS (
 )
 
 SELECT
-  CAST(id AS INT64) AS event_id,
+  CAST(id AS INT64) AS id,
   user_id,
   sequence_number,
   session_id,
