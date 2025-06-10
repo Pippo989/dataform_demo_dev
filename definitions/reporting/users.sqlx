@@ -1,0 +1,10 @@
+config {
+  type: "table",
+  database: "pipeline-muni",
+  schema: "thelook_ecommerce",
+  name: "users",
+  description: "Clean users table for reporting - identical to original", 
+  dependencies: ["stg_users"]
+}
+
+SELECT * FROM ${ref("stg_users")}

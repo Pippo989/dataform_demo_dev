@@ -29,4 +29,4 @@ SELECT
   retail_price,
   TRIM(INITCAP(LOWER(department))) as department,
   TRIM(sku) as sku
-FROM ${ref("products")}
+FROM ${ref("raw_products")}

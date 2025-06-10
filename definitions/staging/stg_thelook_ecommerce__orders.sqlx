@@ -33,4 +33,4 @@ SELECT
   returned_at,
   shipped_at,
   delivered_at
-FROM ${ref("orders")}
+FROM ${ref("raw_orders")}

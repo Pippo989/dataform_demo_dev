@@ -47,4 +47,4 @@ SELECT
   longitude,
   TRIM(INITCAP(LOWER(traffic_source))) as traffic_source,
   created_at
-FROM ${ref("users")}
+FROM ${ref("raw_users")}
