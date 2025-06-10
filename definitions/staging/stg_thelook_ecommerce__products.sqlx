@@ -2,7 +2,13 @@
 config {
   type: "view",
   schema: "thelook_ecommerce_staging",
-
+  assertions: {
+    uniqueKey: ["id"],
+    nonNull: ["id"],
+    rowConditions: [
+      "retail_price > 0"
+    ]
+  }
 }
 
 SELECT
@@ -17,5 +23,3 @@ SELECT
   sku
 FROM
   ${ref("products_raw")}
--- Filter out records with invalid business logic at the earliest stage.
-WHERE retail_price > 0

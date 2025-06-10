@@ -2,10 +2,11 @@ config {
   type: "view",
   schema: "thelook_ecommerce_staging",
   assertions: {
-    uniqueKey: ["user_id"],
-    nonNull: ["user_id"]
+    uniqueKey: ["id"],
+    nonNull: ["id"]
   }
 }
+
 
 WITH raw_users AS (
   -- Use the source() function to reference the declared raw table.
@@ -41,6 +42,8 @@ SELECT
   latitude,
   longitude,
   traffic_source,
-  created_at
+  created_at,
+  -- Create the GEOGRAPHY type for spatial analysis
+  ST_GEOGPOINT(longitude, latitude) AS user_geom
 FROM deduplicated_source
 WHERE rn = 1

@@ -5,8 +5,8 @@ config {
   type: "view",
   schema: "thelook_ecommerce_staging",
   assertions: {
-    uniqueKey: ["event_id"],
-    nonNull: ["event_id", "session_id"]
+    uniqueKey: ["id"],
+    nonNull: ["id", "session_id"]
   }
 }
 

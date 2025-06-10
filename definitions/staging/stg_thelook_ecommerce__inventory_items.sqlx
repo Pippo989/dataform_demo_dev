@@ -5,8 +5,8 @@ config {
   type: "view",
   schema: "thelook_ecommerce_staging",
   assertions: {
-    uniqueKey: ["inventory_item_id"],
-    nonNull: ["inventory_item_id", "product_id"],
+    uniqueKey: ["id"],
+    nonNull: ["id", "product_id"],
     rowConditions: [
       "cost > 0",
       "product_retail_price >= cost"
@@ -40,5 +40,3 @@ SELECT
   product_sku
 FROM deduplicated_source
 WHERE rn = 1
-  -- Filter out records with invalid business logic
-  AND cost > 0

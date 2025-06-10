@@ -20,12 +20,6 @@ SELECT
   created_at,
   shipped_at,
   delivered_at,
-  returned_at,
-  sale_price
+  returned_at
 FROM
   ${ref("order_items_raw")}
-WHERE
-  -- Filter out records with NULL primary or foreign keys.
-  id IS NOT NULL
-  AND order_id IS NOT NULL
-  AND product_id IS NOT NULL

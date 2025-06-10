@@ -33,7 +33,6 @@ SELECT
   CAST(created_at AS TIMESTAMP) AS created_at,
   returned_at,
   shipped_at,
-  delivered_at,
-  num_of_item
+  delivered_at
 FROM deduplicated_source
 WHERE rn = 1
