@@ -1,0 +1,45 @@
+-- definitions/staging/stg_thelook_ecommerce__inventory_items.sqlx
+-- Cleans and standardizes the raw inventory_items data.
+
+config {
+  type: "view",
+  schema: "thelook_ecommerce_staging",
+  assertions: {
+    uniqueKey: ["inventory_item_id"],
+    nonNull: ["inventory_item_id", "product_id"],
+    rowConditions: [
+      "cost > 0",
+      "product_retail_price >= cost"
+    ]
+  }
+}
+
+WITH raw_inventory_items AS (
+  SELECT * FROM ${ref("inventory_items_raw")}
+),
+
+deduplicated_source AS (
+  SELECT
+    *,
+    ROW_NUMBER() OVER(PARTITION BY id ORDER BY ingestion_timestamp DESC) as rn
+  FROM raw_inventory_items
+  WHERE id IS NOT NULL AND product_id IS NOT NULL
+)
+
+SELECT
+  CAST(id AS INT64) AS inventory_item_id,
+  CAST(product_id AS INT64) AS product_id,
+  created_at,
+  sold_at,
+  cost,
+  product_category,
+  product_name,
+  product_brand,
+  product_retail_price,
+  product_department,
+  product_sku
+FROM deduplicated_source
+WHERE rn = 1
+  -- Filter out records with invalid business logic
+  AND cost > 0
+  AND product_retail_price >= cost

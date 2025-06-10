@@ -1,6 +1,0 @@
-config {
-  type: "declaration",
-  database: "pipeline-muni",
-  schema: "raw_ecommerce",
-  name: "orders"
-}

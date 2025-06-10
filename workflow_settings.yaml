@@ -1,5 +1,5 @@
 dataformCoreVersion: 3.0.0
 defaultLocation: US
-defaultProject: lateral-layout-441708-v3
-defaultDataset: raw_ecommerce
-defaultAssertionDataset: raw_ecommerces
+defaultProject: pipeline-muni
+defaultDataset: thelook_ecommerce_raw
+defaultAssertionDataset: thelook_ecommerce_assertions

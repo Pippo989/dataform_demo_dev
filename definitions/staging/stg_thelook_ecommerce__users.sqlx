@@ -1,0 +1,44 @@
+config {
+  type: "view",
+  schema: "thelook_ecommerce_staging",
+  assertions: {
+    uniqueKey: ["user_id"],
+    nonNull: ["user_id"]
+  }
+}
+
+WITH raw_users AS (
+  -- Use the source() function to reference the declared raw table.
+  SELECT * FROM ${ref("users_raw")}
+),
+
+deduplicated_source AS (
+  -- Use a window function to identify and remove duplicates.
+  -- We partition by the business key (id) and order by the ingestion timestamp
+  -- to keep the most recent record.
+  SELECT
+    *,
+    ROW_NUMBER() OVER(PARTITION BY id ORDER BY ingestion_timestamp DESC) as rn
+  FROM raw_users
+)
+
+SELECT
+  -- Cast to the correct data type
+  CAST(id AS INT64) AS user_id,
+  -- Trim whitespace and apply consistent naming
+  TRIM(first_name) AS first_name,
+  TRIM(last_name) AS last_name,
+  email,
+  age,
+  -- Use COALESCE to handle NULLs if a default is desired, otherwise leave as is.
+  gender,
+  state,
+  street_address,
+  postal_code,
+  -- Apply consistent casing
+  INITCAP(city) AS city,
+  UPPER(country) AS country,
+  traffic_source,
+  created_at
+FROM deduplicated_source
+WHERE rn = 1
