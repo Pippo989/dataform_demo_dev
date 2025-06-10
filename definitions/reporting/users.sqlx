@@ -5,6 +5,6 @@ config {
   name: "users",
   description: "Clean users table for reporting - identical to original", 
   dependencies: ["stg_users"]
-}
+} 
 
 SELECT * FROM ${ref("stg_users")}
