@@ -1,12 +1,10 @@
--- definitions/staging/stg_thelook_ecommerce__products.sqlx
--- Cleans and standardizes the raw products data.
 
 config {
   type: "view",
   schema: "thelook_ecommerce_staging",
   assertions: {
-    uniqueKey: ["product_id"],
-    nonNull: ["product_id", "distribution_center_id"],
+    uniqueKey: ["id"],
+    nonNull: ["id"],
     rowConditions: [
       "retail_price > 0"
     ]
@@ -14,7 +12,7 @@ config {
 }
 
 SELECT
-  id AS product_id,
+  id,
   cost,
   -- Use COALESCE to replace NULLs with a standard value.
   COALESCE(INITCAP(category), 'Unknown') AS category,
@@ -22,8 +20,7 @@ SELECT
   COALESCE(brand, 'Unknown') AS brand,
   retail_price,
   department,
-  sku,
-  distribution_center_id
+  sku
 FROM
   ${ref("products_raw")}
 -- Filter out records with invalid business logic at the earliest stage.

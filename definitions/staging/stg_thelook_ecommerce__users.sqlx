@@ -24,7 +24,7 @@ deduplicated_source AS (
 
 SELECT
   -- Cast to the correct data type
-  CAST(id AS INT64) AS user_id,
+  CAST(id AS INT64) AS id,
   -- Trim whitespace and apply consistent naming
   TRIM(first_name) AS first_name,
   TRIM(last_name) AS last_name,
@@ -38,6 +38,8 @@ SELECT
   -- Apply consistent casing
   INITCAP(city) AS city,
   UPPER(country) AS country,
+  latitude,
+  longitude,
   traffic_source,
   created_at
 FROM deduplicated_source
