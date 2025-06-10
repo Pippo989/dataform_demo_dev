@@ -1,6 +1,6 @@
 config {
   type: "declaration",
-  database: "your-gcp-project-id",
+  database: "pipeline-muni",
   schema: "thelook_ecommerce_raw",
   name: "order_items_raw"
 }
