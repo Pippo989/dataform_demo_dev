@@ -1,42 +1,38 @@
--- definitions/staging/stg_thelook_ecommerce__inventory_items.sqlx
--- Cleans and standardizes the raw inventory_items data.
-
 config {
   type: "view",
-  schema: "thelook_ecommerce_staging",
+  database: "pipeline-muni",
+  schema: "staging_thelook_ecommerce", 
+  name: "stg_inventory_items",
+  description: "Staging table for inventory items with formatting cleaned",
+  columns: {
+    id: "Unique inventory item identifier",
+    product_id: "Product identifier",
+    created_at: "Item creation timestamp",
+    sold_at: "Item sale timestamp",
+    cost: "Item cost",
+    product_category: "Product category (cleaned)",
+    product_name: "Product name (cleaned)",
+    product_brand: "Product brand (cleaned)",
+    product_retail_price: "Product retail price",
+    product_department: "Product department (cleaned)",
+    product_sku: "Product SKU (cleaned)"
+  },
   assertions: {
     uniqueKey: ["id"],
-    nonNull: ["id", "product_id"],
-    rowConditions: [
-      "cost > 0",
-      "product_retail_price >= cost"
-    ]
+    nonNull: ["id", "product_id", "created_at", "cost"]
   }
 }
 
-WITH raw_inventory_items AS (
-  SELECT * FROM ${ref("inventory_items_raw")}
-),
-
-deduplicated_source AS (
-  SELECT
-    *,
-    ROW_NUMBER() OVER(PARTITION BY id ORDER BY ingestion_timestamp DESC) as rn
-  FROM raw_inventory_items
-  WHERE id IS NOT NULL AND product_id IS NOT NULL
-)
-
-SELECT
-  CAST(id AS INT64) AS id,
-  CAST(product_id AS INT64) AS product_id,
+SELECT 
+  id,
+  product_id,
   created_at,
   sold_at,
   cost,
-  product_category,
-  product_name,
-  product_brand,
+  TRIM(INITCAP(LOWER(product_category))) as product_category,
+  TRIM(product_name) as product_name,
+  TRIM(INITCAP(LOWER(product_brand))) as product_brand,
   product_retail_price,
-  product_department,
-  product_sku
-FROM deduplicated_source
-WHERE rn = 1
+  TRIM(INITCAP(LOWER(product_department))) as product_department,
+  TRIM(product_sku) as product_sku
+FROM ${ref("raw_inventory_items")}

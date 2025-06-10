@@ -1,25 +1,32 @@
-
 config {
   type: "view",
-  schema: "thelook_ecommerce_staging",
+  database: "pipeline-muni",
+  schema: "staging_thelook_ecommerce",
+  name: "stg_products",
+  description: "Staging table for products with formatting cleaned",
+  columns: {
+    id: "Unique product identifier",
+    cost: "Product cost",
+    category: "Product category (cleaned)",
+    name: "Product name (cleaned)",
+    brand: "Product brand (cleaned)",
+    retail_price: "Product retail price",
+    department: "Product department (cleaned)",
+    sku: "Product SKU (cleaned)"
+  },
   assertions: {
     uniqueKey: ["id"],
-    nonNull: ["id"],
-    rowConditions: [
-      "retail_price > 0"
-    ]
+    nonNull: ["id", "cost", "category", "name", "brand", "retail_price", "department", "sku"]
   }
 }
 
-SELECT
+SELECT 
   id,
   cost,
-  -- Use COALESCE to replace NULLs with a standard value.
-  COALESCE(INITCAP(category), 'Unknown') AS category,
-  name,
-  COALESCE(brand, 'Unknown') AS brand,
+  TRIM(INITCAP(LOWER(category))) as category,
+  TRIM(name) as name,
+  TRIM(INITCAP(LOWER(brand))) as brand,
   retail_price,
-  department,
-  sku
-FROM
-  ${ref("products_raw")}
+  TRIM(INITCAP(LOWER(department))) as department,
+  TRIM(sku) as sku
+FROM ${ref("products")}

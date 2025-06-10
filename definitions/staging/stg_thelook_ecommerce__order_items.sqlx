@@ -1,25 +1,36 @@
--- definitions/staging/stg_thelook_ecommerce__order_items.sqlx
--- Cleans and standardizes the raw order_items data.
-
 config {
   type: "view",
-  schema: "thelook_ecommerce_staging",
+  database: "pipeline-muni",
+  schema: "staging_thelook_ecommerce",
+  name: "stg_order_items", 
+  description: "Staging table for order items with formatting cleaned",
+  columns: {
+    id: "Unique order item identifier",
+    order_id: "Order identifier",
+    user_id: "User identifier",
+    product_id: "Product identifier", 
+    inventory_item_id: "Inventory item identifier",
+    status: "Order item status (cleaned)",
+    created_at: "Order item creation timestamp",
+    shipped_at: "Order item ship timestamp",
+    delivered_at: "Order item delivery timestamp",
+    returned_at: "Order item return timestamp"
+  },
   assertions: {
-    uniqueKey: ["order_item_id"],
-    nonNull: ["order_item_id", "order_id", "user_id", "product_id"]
+    uniqueKey: ["id"],
+    nonNull: ["id", "order_id", "user_id", "product_id", "inventory_item_id", "status", "created_at"]
   }
 }
 
-SELECT
+SELECT 
   id,
   order_id,
   user_id,
   product_id,
   inventory_item_id,
-  INITCAP(status) AS status,
+  TRIM(INITCAP(LOWER(status))) as status,
   created_at,
   shipped_at,
   delivered_at,
   returned_at
-FROM
-  ${ref("order_items_raw")}
+FROM ${ref("order_items")}

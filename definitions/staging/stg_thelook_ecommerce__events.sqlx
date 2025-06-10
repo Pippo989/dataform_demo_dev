@@ -1,40 +1,40 @@
--- definitions/staging/stg_thelook_ecommerce__events.sqlx
--- Cleans and standardizes the raw events data.
-
 config {
   type: "view",
-  schema: "thelook_ecommerce_staging",
+  database: "pipeline-muni",
+  schema: "staging_thelook_ecommerce",
+  name: "stg_events",
+  description: "Staging table for events with formatting cleaned",
+  columns: {
+    id: "Unique event identifier",
+    user_id: "User identifier", 
+    sequence_number: "Event sequence number",
+    session_id: "Session identifier",
+    created_at: "Event creation timestamp",
+    ip_address: "User IP address",
+    city: "User city (cleaned)",
+    state: "User state (cleaned)",
+    postal_code: "User postal code",
+    browser: "Browser type (cleaned)",
+    traffic_source: "Traffic source (cleaned)",
+    uri: "URI path"
+  },
   assertions: {
     uniqueKey: ["id"],
-    nonNull: ["id", "session_id"]
+    nonNull: ["id", "sequence_number", "session_id", "created_at"]
   }
 }
 
-WITH raw_events AS (
-  SELECT * FROM ${ref("events_raw")}
-),
-
-deduplicated_source AS (
-  SELECT
-    *,
-    ROW_NUMBER() OVER(PARTITION BY id ORDER BY ingestion_timestamp DESC) as rn
-  FROM raw_events
-  WHERE id IS NOT NULL
-)
-
-SELECT
-  CAST(id AS INT64) AS id,
+SELECT 
+  id,
   user_id,
   sequence_number,
   session_id,
   created_at,
   ip_address,
-  city,
-  state,
+  TRIM(INITCAP(LOWER(city))) as city,
+  TRIM(INITCAP(LOWER(state))) as state,
   postal_code,
-  -- Standardize casing
-  INITCAP(browser) AS browser,
-  INITCAP(traffic_source) AS traffic_source,
+  TRIM(INITCAP(LOWER(browser))) as browser,
+  TRIM(INITCAP(LOWER(traffic_source))) as traffic_source,
   uri
-FROM deduplicated_source
-WHERE rn = 1
+FROM ${ref("raw_events")}

@@ -1,49 +1,50 @@
 config {
-  type: "view",
-  schema: "thelook_ecommerce_staging",
+  type: "view", 
+  database: "pipeline-muni",
+  schema: "staging_thelook_ecommerce",
+  name: "stg_users",
+  description: "Staging table for users with formatting cleaned",
+  columns: {
+    id: "Unique user identifier",
+    first_name: "User first name (cleaned)",
+    last_name: "User last name (cleaned)",
+    email: "User email (cleaned)",
+    age: "User age",
+    gender: "User gender (cleaned)",
+    state: "User state (cleaned)",
+    street_address: "User street address (cleaned)",
+    postal_code: "User postal code",
+    city: "User city (cleaned)",
+    country: "User country (cleaned)",
+    latitude: "User latitude",
+    longitude: "User longitude", 
+    traffic_source: "User traffic source (cleaned)",
+    created_at: "User creation timestamp"
+  },
   assertions: {
     uniqueKey: ["id"],
-    nonNull: ["id"]
+    nonNull: ["id", "first_name", "last_name", "email", "age", "gender", "created_at"]
   }
 }
 
-
-WITH raw_users AS (
-  -- Use the source() function to reference the declared raw table.
-  SELECT * FROM ${ref("users_raw")}
-),
-
-deduplicated_source AS (
-  -- Use a window function to identify and remove duplicates.
-  -- We partition by the business key (id) and order by the ingestion timestamp
-  -- to keep the most recent record.
-  SELECT
-    *,
-    ROW_NUMBER() OVER(PARTITION BY id ORDER BY ingestion_timestamp DESC) as rn
-  FROM raw_users
-)
-
-SELECT
-  -- Cast to the correct data type
-  CAST(id AS INT64) AS id,
-  -- Trim whitespace and apply consistent naming
-  TRIM(first_name) AS first_name,
-  TRIM(last_name) AS last_name,
-  email,
+SELECT 
+  id,
+  TRIM(INITCAP(LOWER(first_name))) as first_name,
+  TRIM(INITCAP(LOWER(last_name))) as last_name,
+  LOWER(TRIM(email)) as email,
   age,
-  -- Use COALESCE to handle NULLs if a default is desired, otherwise leave as is.
-  gender,
-  state,
-  street_address,
+  CASE 
+    WHEN UPPER(TRIM(gender)) IN ('M', 'MALE') THEN 'M'
+    WHEN UPPER(TRIM(gender)) IN ('F', 'FEMALE') THEN 'F'
+    ELSE UPPER(TRIM(gender))  -- Keep original if not M/F
+  END as gender,
+  TRIM(INITCAP(LOWER(state))) as state,
+  TRIM(street_address) as street_address,
   postal_code,
-  -- Apply consistent casing
-  INITCAP(city) AS city,
-  UPPER(country) AS country,
+  TRIM(INITCAP(LOWER(city))) as city,
+  TRIM(INITCAP(LOWER(country))) as country,
   latitude,
   longitude,
-  traffic_source,
-  created_at,
-  -- Create the GEOGRAPHY type for spatial analysis
-  ST_GEOGPOINT(longitude, latitude) AS user_geom
-FROM deduplicated_source
-WHERE rn = 1
+  TRIM(INITCAP(LOWER(traffic_source))) as traffic_source,
+  created_at
+FROM ${ref("users")}

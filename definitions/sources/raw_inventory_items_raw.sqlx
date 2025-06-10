@@ -1,0 +1,6 @@
+config {
+  type: "declaration",
+  database: "pipeline-muni",
+  schema: "raw_thelook_ecommerce",
+  name: "raw_inventory_items"
+}
