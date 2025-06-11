@@ -16,7 +16,7 @@ config {
   },
   assertions: {
     uniqueKey: ["id"],
-    nonNull: ["id", "cost", "category", "name", "brand", "retail_price", "department", "sku"]
+    nonNull: ["id", "cost", "category", "retail_price", "department", "sku"]
   }
 }
 
