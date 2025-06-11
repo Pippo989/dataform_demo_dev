@@ -22,5 +22,5 @@ SELECT
     name, 
     latitude,
     longitude,
-    distribution_center_geom
+    ST_GEOGFROMTEXT(distribution_center_geom) AS distribution_center_geom
 FROM ${ref("raw_distribution_centers")}
