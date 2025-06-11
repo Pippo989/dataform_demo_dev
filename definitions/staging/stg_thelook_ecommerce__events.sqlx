@@ -1,8 +1,8 @@
 config {
-  type: "view",
+  type: "table",
   database: "pipeline-muni",
-  schema: "staging_thelook_ecommerce",
-  name: "stg_events",
+  schema: "thelook_ecommerce",
+  name: "events",
   description: "Staging table for events with formatting cleaned",
   columns: {
     id: "Unique event identifier",

@@ -1,4 +1,4 @@
-config {
+/* config {
   type: "table",
   database: "pipeline-muni", 
   schema: "thelook_ecommerce",
@@ -7,4 +7,4 @@ config {
   dependencies: ["stg_order_items"]
 }
 
-SELECT * FROM ${ref("stg_order_items")}
+SELECT * FROM ${ref("stg_order_items")} */

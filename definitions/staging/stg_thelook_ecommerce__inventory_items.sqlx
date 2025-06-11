@@ -1,8 +1,8 @@
 config {
-  type: "view",
+  type: "table",
   database: "pipeline-muni",
-  schema: "staging_thelook_ecommerce", 
-  name: "stg_inventory_items",
+  schema: "thelook_ecommerce", 
+  name: "inventory_items",
   description: "Staging table for inventory items with formatting cleaned",
   columns: {
     id: "Unique inventory item identifier",

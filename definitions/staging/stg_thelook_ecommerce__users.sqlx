@@ -1,8 +1,8 @@
 config {
-  type: "view", 
+  type: "table", 
   database: "pipeline-muni",
-  schema: "staging_thelook_ecommerce",
-  name: "stg_users",
+  schema: "thelook_ecommerce",
+  name: "users",
   description: "Staging table for users with formatting cleaned",
   columns: {
     id: "Unique user identifier",

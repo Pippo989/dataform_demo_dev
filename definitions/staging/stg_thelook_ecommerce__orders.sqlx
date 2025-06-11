@@ -1,8 +1,8 @@
 config {
-  type: "view",
+  type: "table",
   database: "pipeline-muni", 
-  schema: "staging_thelook_ecommerce",
-  name: "stg_orders",
+  schema: "thelook_ecommerce",
+  name: "orders",
   description: "Staging table for orders with formatting cleaned",
   columns: {
     order_id: "Unique order identifier",

@@ -1,0 +1,26 @@
+config {
+  type: "table",
+  database: "pipeline-muni",
+  schema: "thelook_ecommerce",
+  name: "events",
+  description: "Staging table for events with formatting cleaned",
+  columns: {
+    id: "Unique event identifier",
+    name: "User identifier", 
+    latitude: "Event sequence number",
+    longitude: "Session identifier",
+    distribution_center_geom: "Event creation timestamp",
+  },
+  assertions: {
+    uniqueKey: ["id"],
+    nonNull: ["id", "name", "latitude", "longitude", "distribution_center_geom"]
+  }
+}
+
+SELECT 
+    id,
+    name, 
+    latitude,
+    longitude,
+    distribution_center_geom
+FROM ${ref("raw_distribution_centers")}
