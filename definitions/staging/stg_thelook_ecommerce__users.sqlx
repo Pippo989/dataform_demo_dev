@@ -29,7 +29,7 @@ config {
 
 SELECT 
   id AS id,
-  TRIM(INITCAP(LOWER(first_name))) as first_name,
+  TRIM(INITCAP(LOWER(first_name))) as first_n,
   TRIM(INITCAP(LOWER(last_name))) as last_name,
   LOWER(TRIM(email)) as email,
   age,
